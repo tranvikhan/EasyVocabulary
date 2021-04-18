@@ -1,30 +1,15 @@
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import React from "react";
 import { SafeAreaView, View, Text, Platform } from "react-native";
 import tailwind from "tailwind-rn";
-import Feather from "react-native-vector-icons/Feather";
-import TranslateScreen from "../screens/Translate.screen";
+import { createStackNavigator } from "@react-navigation/stack";
+import HomeNavigaion from "./HomeNavigation";
+import AddVocabulary from "../screens/AddVocabulary.screen";
+import UnitDetail from "../screens/UnitDetail.screen";
+import AddToUnit from "../screens/AddToUnit.screen";
+import TestScreen from "../screens/Test.screen";
+import StudyScreen from "../screens/Study.screen";
 
-const Tab = createMaterialBottomTabNavigator();
-const VocabularyScreen = () => (
-  <View style={tailwind("pt-12 items-center")}>
-    <View style={tailwind("bg-blue-200 px-3 py-1 rounded-full")}>
-      <Text style={tailwind("text-blue-800 font-semibold")}>
-        Hello Tailwind 1
-      </Text>
-    </View>
-  </View>
-);
-
-const SettingsScreen = () => (
-  <View style={tailwind("pt-12 items-center")}>
-    <View style={tailwind("bg-blue-200 px-3 py-1 rounded-full")}>
-      <Text style={tailwind("text-blue-800 font-semibold")}>
-        Hello Tailwind 3
-      </Text>
-    </View>
-  </View>
-);
+const Stack = createStackNavigator();
 
 export default function MainMenu() {
   return (
@@ -34,35 +19,38 @@ export default function MainMenu() {
         paddingTop: Platform.OS === "android" ? 25 : 0,
       }}
     >
-      <Tab.Navigator labeled={false} initialRouteName="Vocabulary">
-        <Tab.Screen
-          name="Vocabulary"
-          component={VocabularyScreen}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Feather name="bookmark" color={color} size={26} />
-            ),
-          }}
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen
+          name="UnitDetail"
+          component={UnitDetail}
+          options={{ title: "Danh sách từ vựng" }}
         />
-        <Tab.Screen
-          name="Translate"
-          component={TranslateScreen}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Feather name="framer" color={color} size={26} />
-            ),
-          }}
+        <Stack.Screen
+          name="AddVocabulary"
+          component={AddVocabulary}
+          options={{ title: "Thêm từ vựng" }}
         />
-        <Tab.Screen
-          name="Settings"
-          component={SettingsScreen}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Feather name="settings" color={color} size={26} />
-            ),
-          }}
+        <Stack.Screen
+          name="StudyScreen"
+          component={StudyScreen}
+          options={{ title: "Luyện tập" }}
         />
-      </Tab.Navigator>
+        <Stack.Screen
+          name="TestScreen"
+          component={TestScreen}
+          options={{ title: "Kiễm tra" }}
+        />
+        <Stack.Screen
+          name="AddToUnit"
+          component={AddToUnit}
+          options={{ title: "Chọn bài học của bạn" }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={HomeNavigaion}
+          options={{ title: "Easy Vocabulary", headerShown: false }}
+        />
+      </Stack.Navigator>
     </SafeAreaView>
   );
 }

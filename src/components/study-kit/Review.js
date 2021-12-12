@@ -54,7 +54,13 @@ const Review = (props) => {
       </View>
 
       <View style={tailwind("items-center mt-4")}>
-        <KButton text="Tiếp tục" color="blue-500" fill block />
+        <KButton
+          text="Tiếp tục"
+          color="blue-500"
+          fill
+          block
+          onPress={props.submit}
+        />
       </View>
     </View>
   );

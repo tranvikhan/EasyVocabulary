@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "vocabulary",
-    "slug": "vocabulary",
+    "name": "Easy Vocabulary",
+    "slug": "easyvocabulary",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F62C23"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,14 +17,16 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tranviluong.vocabulary",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.tranvikhan.vocabulary"
+      "package": "com.tranviluong.vocabulary"
     },
     "web": {
       "favicon": "./assets/favicon.png"

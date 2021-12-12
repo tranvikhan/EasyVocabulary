@@ -73,7 +73,7 @@ const ResultBlock = (props) => {
         {mapping(props.trueV, props.allV).message}
       </Text>
       <View style={tailwind("items-center mt-4")}>
-        <KButton text="Tiếp tục" color="blue-500" fill block />
+        <KButton text="OK" color="blue-500" fill block onPress={props.submit} />
       </View>
     </View>
   );

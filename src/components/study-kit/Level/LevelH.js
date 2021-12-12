@@ -11,6 +11,10 @@ import KTextInput from "../../ui-kit/KTextInput";
 const LevelH = (props) => {
   const [status, setStatus] = React.useState("wait");
   const [text, setText] = React.useState("");
+  React.useEffect(() => {
+    setText("");
+    setStatus("wait");
+  }, [props.data]);
 
   const [sound, setSound] = React.useState();
 

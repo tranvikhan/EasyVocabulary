@@ -7,42 +7,71 @@ import VocabularyItem from "../components/VocabularyItem";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import KButton from "../components/ui-kit/KButton";
+import firebase from "firebase";
 
-const dataSource = [
-  {
-    en: "Red",
-    vi: "Màu đỏ",
-    progress: 0,
-  },
-  {
-    en: "White",
-    vi: "Màu trắng",
-    progress: 0.4,
-  },
-  {
-    en: "Black",
-    vi: "Màu đen",
-    progress: 0.4,
-  },
-  {
-    en: "Pink",
-    vi: "Màu tím",
-    progress: 0.6,
-  },
-  {
-    en: "Yellow",
-    vi: "Màu vàng",
-    progress: 0.8,
-  },
-  {
-    en: "Blue",
-    vi: "Màu xanh",
-    progress: 1,
-  },
-];
 const UnitDetail = (props) => {
   const route = useRoute();
   const navigation = useNavigation();
+  const [unit, setUnit] = React.useState(null);
+  const [vocabularys, setVocabularys] = React.useState([]);
+  React.useEffect(() => {
+    if ((route.params.unit_id, route.params.userId)) {
+      firebase
+        .database()
+        .ref("units/" + route.params.userId + "/" + route.params.unit_id)
+        .on("value", (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            setUnit({
+              ...data,
+              progress: data.all === 0 ? 0 : data.count / data.all,
+            });
+          } else {
+            setUnit(null);
+            navigation.goBack();
+          }
+        });
+      firebase
+        .database()
+        .ref("vocabularys/" + route.params.unit_id)
+        .on("value", (snapshot) => {
+          const refVoca = snapshot.val();
+          if (refVoca) {
+            let newVocabularys = [];
+            let list_id = Object.keys(refVoca);
+            let datas = Object.values(refVoca);
+            let length_list = list_id.length;
+            let complete_count = 0;
+            for (let i = 0; i < length_list; i++) {
+              if (datas[i].step === 8) complete_count++;
+              newVocabularys.push({
+                vocabulary_id: list_id[i],
+                en: datas[i].en,
+                vi: datas[i].vi,
+                progress: datas[i].step / 8,
+                step: datas[i].step,
+              });
+            }
+            if (length_list > 0) {
+              setVocabularys(newVocabularys);
+              let newUnit = firebase
+                .database()
+                .ref(
+                  "units/" + route.params.userId + "/" + route.params.unit_id
+                )
+                .set({
+                  name: route.params.name,
+                  all: length_list,
+                  count: complete_count,
+                });
+            }
+          } else {
+            setVocabularys([]);
+          }
+        });
+    }
+  }, [route.params.unit_id, route.params.userId]);
+
   const mapColor = (progress) => {
     if (progress === 0) return "#ffffff";
     if (progress < 0.25) return "#EF4444";
@@ -53,37 +82,38 @@ const UnitDetail = (props) => {
   };
   return (
     <View style={tailwind("flex-1 flex-col bg-gray-200 ")}>
-      <View style={tailwind("p-2 bg-white border-b border-gray-100")}>
+      <View style={tailwind("p-2 flex-none bg-white border-b border-gray-100")}>
         <View style={tailwind("flex-auto flex-row  px-2")}>
           <Text
             style={tailwind("font-bold  text-lg  text-gray-900")}
             multiline
             numberOfLines={1}
           >
-            Màu sắc
+            {unit && unit.name}
           </Text>
         </View>
         <View style={tailwind("flex flex-row justify-between mb-2 px-2")}>
           <Text style={tailwind("text-gray-600")} multiline numberOfLines={1}>
-            Đã học 2 từ
+            Đã học thuộc {unit && unit.count} từ
           </Text>
           <Text style={tailwind("text-gray-600")} multiline numberOfLines={1}>
-            10 từ
+            {unit && unit.all} từ
           </Text>
         </View>
         <View style={tailwind("flex-auto px-2 justify-center")}>
           <Progress.Bar
-            progress={0.2}
+            progress={unit ? unit.progress : 0}
             width={null}
             height={10}
             borderRadius={10}
-            color={mapColor(0.2)}
+            color={mapColor(unit ? unit.progress : 0)}
           />
         </View>
       </View>
       <FlatList
-        contentContainerStyle={tailwind("p-1 flex-col ")}
-        data={dataSource}
+        style={tailwind("flex-grow")}
+        contentContainerStyle={tailwind("p-1 flex-col pb-20")}
+        data={vocabularys}
         renderItem={({ item, index }) => (
           <VocabularyItem navigation={navigation} data={item} key={index} />
         )}
@@ -103,7 +133,14 @@ const UnitDetail = (props) => {
             color="blue-500"
             fill
             onPress={() => {
-              navigation.navigate("StudyScreen");
+              if (vocabularys.length > 3) {
+                navigation.navigate("StudyScreen", {
+                  list: vocabularys,
+                  unit_id: route.params.unit_id,
+                });
+              } else {
+                alert("Thêm từ 4 từ để học");
+              }
             }}
             block
             icon={
@@ -123,7 +160,9 @@ const UnitDetail = (props) => {
             color="blue-500"
             block
             onPress={() => {
-              navigation.navigate("AddVocabulary");
+              navigation.navigate("AddVocabulary", {
+                unit_id: route.params.unit_id,
+              });
             }}
             bgColor="blue-100"
             icon={

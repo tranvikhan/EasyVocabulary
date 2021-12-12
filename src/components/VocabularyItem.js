@@ -23,7 +23,7 @@ const VocabularyItem = (props) => {
   };
   return (
     <TouchableOpacity
-      style={tailwind("flex-1 m-1 bg-white rounded-lg")}
+      style={tailwind("m-1 bg-white rounded-lg")}
       activeOpacity={0.8}
       onPress={() => {
         Speech.speak(props.data.en, { language: "en" });

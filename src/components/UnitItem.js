@@ -17,7 +17,10 @@ const UnitItem = (props) => {
       activeOpacity={0.5}
       onPress={() => {
         if (props.navigation) {
-          props.navigation.navigate("UnitDetail", { id: props.index });
+          props.navigation.navigate("UnitDetail", {
+            ...props.data,
+            userId: props.userId,
+          });
         }
       }}
     >
@@ -31,7 +34,7 @@ const UnitItem = (props) => {
             {props.data.name}
           </Text>
           <Text style={tailwind("text-gray-600")} multiline numberOfLines={1}>
-            {props.data.count + " từ"}
+            {props.data.all + " từ"}
           </Text>
         </View>
         <View style={tailwind("flex-1 p-2 justify-center")}>

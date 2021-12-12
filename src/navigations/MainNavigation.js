@@ -8,11 +8,17 @@ import UnitDetail from "../screens/UnitDetail.screen";
 import AddToUnit from "../screens/AddToUnit.screen";
 import TestScreen from "../screens/Test.screen";
 import StudyScreen from "../screens/Study.screen";
+import AuthNavigation from "./AuthNavigation";
+import { useAuth } from "../Firebase/context";
+import SettingScreen from "../screens/Setting.screen";
+import AuthorScreen from "../screens/Author.screen";
 
 const Stack = createStackNavigator();
 
 export default function MainMenu() {
-  return (
+  const { currentUser } = useAuth();
+
+  return currentUser ? (
     <SafeAreaView
       style={{
         ...tailwind("h-full"),
@@ -50,7 +56,19 @@ export default function MainMenu() {
           component={HomeNavigaion}
           options={{ title: "Easy Vocabulary", headerShown: false }}
         />
+        <Stack.Screen
+          name="SettingScreen"
+          component={SettingScreen}
+          options={{ title: "Cài đặt" }}
+        />
+        <Stack.Screen
+          name="AuthorScreen"
+          component={AuthorScreen}
+          options={{ title: "Thông tin tác giả" }}
+        />
       </Stack.Navigator>
     </SafeAreaView>
+  ) : (
+    <AuthNavigation />
   );
 }

@@ -17,29 +17,28 @@ import KTextInput from "../components/ui-kit/KTextInput";
 
 const dataSource = [
   {
-    name: "Màu sắc",
-    count: 6,
-    progress: 1 / 6.0,
-  },
-  {
-    name: "Động vật",
-    count: 30,
-    progress: 0.6,
-  },
-  {
-    name: "Phương tiện",
-    count: 18,
+    name: "Unit 1",
+    count: 5,
+    all: 10,
     progress: 0.5,
   },
   {
-    name: "Đồ dùng gia đình",
-    count: 40,
+    name: "Unit 2",
+    count: 3,
+    all: 18,
+    progress: 0.25,
+  },
+  {
+    name: "Unit 3",
+    count: 20,
+    all: 20,
     progress: 1,
   },
   {
-    name: "Toeic",
-    count: 600,
-    progress: 0.3,
+    name: "Unit 4",
+    count: 0,
+    all: 18,
+    progress: 0,
   },
 ];
 function ClassUnit(props) {

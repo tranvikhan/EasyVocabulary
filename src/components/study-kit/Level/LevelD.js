@@ -28,8 +28,8 @@ const LevelD = (props) => {
       });
       setList(coppy);
       console.log(coppy);
+      //Speech.speak(props.data.en, { language: "en" });
     }
-    Speech.speak(props.data.en, { language: "en" });
   }, [props.data]);
   const [sound, setSound] = React.useState();
   function shuffle(array) {

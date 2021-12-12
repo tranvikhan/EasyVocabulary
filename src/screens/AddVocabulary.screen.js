@@ -19,8 +19,8 @@ import * as Speech from "expo-speech";
 import tailwind from "tailwind-rn";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { useNavigation } from "@react-navigation/native";
-import KButton from "../components/ui-kit/KButton";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import firebase from "firebase";
 
 const AddVocabulary = () => {
   const [toText, setToText] = React.useState("");
@@ -28,15 +28,15 @@ const AddVocabulary = () => {
   const [modeTranslate, setModeTranslate] = React.useState("en_vi");
   const typingTimeoutRef = React.useRef(null);
   const navigation = useNavigation();
-  const goAdd = () => {
-    navigation.navigate("AddToUnit");
-  };
+  const route = useRoute();
+  const [dataSource, setDataSource] = React.useState([]);
+
   React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
           onPress={() => {
-            navigation.goBack();
+            addAll(dataSource);
           }}
           style={tailwind("mr-4")}
         >
@@ -44,9 +44,21 @@ const AddVocabulary = () => {
         </TouchableOpacity>
       ),
     });
-  }, []);
-
-  const [dataSource, setDataSource] = React.useState([]);
+  }, [dataSource]);
+  const addAll = (list) => {
+    list.map((data) => {
+      console.log(data);
+      let newVocabulary = firebase
+        .database()
+        .ref("vocabularys/" + route.params.unit_id)
+        .push();
+      newVocabulary.set({
+        ...data,
+        step: 0,
+      });
+    });
+    navigation.goBack();
+  };
 
   const mapLang = {
     en_vi: {
@@ -263,7 +275,6 @@ const AddVocabulary = () => {
         {dataSource.map((dt, i) => (
           <Item
             navigation={navigation}
-            progress={Math.random()}
             key={i}
             enText={dt.en}
             viText={dt.vi}

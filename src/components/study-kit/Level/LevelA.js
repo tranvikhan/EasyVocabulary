@@ -11,6 +11,9 @@ const LevelA = (props) => {
   const [status, setStatus] = React.useState("wait");
 
   const [sound, setSound] = React.useState();
+  React.useEffect(() => {
+    setStatus("wait");
+  }, [props.data]);
 
   async function playSound(value) {
     const { sound } = await Audio.Sound.createAsync(

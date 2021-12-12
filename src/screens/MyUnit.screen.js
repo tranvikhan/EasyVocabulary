@@ -14,63 +14,47 @@ import UnitItem from "../components/UnitItem";
 import { useNavigation } from "@react-navigation/native";
 import KButton from "../components/ui-kit/KButton";
 import KTextInput from "../components/ui-kit/KTextInput";
+import firebase from "firebase";
+import { useAuth } from "../Firebase/context";
+import { set } from "react-native-reanimated";
 
-const dataSource = [
-  {
-    name: "Màu sắc",
-    count: 6,
-    progress: 1 / 6.0,
-  },
-  {
-    name: "Động vật",
-    count: 30,
-    progress: 0.6,
-  },
-  {
-    name: "Phương tiện",
-    count: 18,
-    progress: 0.5,
-  },
-  {
-    name: "Đồ dùng gia đình",
-    count: 40,
-    progress: 1,
-  },
-  {
-    name: "Toeic",
-    count: 600,
-    progress: 0.3,
-  },
-  {
-    name: "Màu sắc",
-    count: 6,
-    progress: 1 / 6.0,
-  },
-  {
-    name: "Động vật",
-    count: 30,
-    progress: 0.6,
-  },
-  {
-    name: "Phương tiện",
-    count: 18,
-    progress: 0.5,
-  },
-  {
-    name: "Đồ dùng gia đình",
-    count: 40,
-    progress: 1,
-  },
-  {
-    name: "Toeic",
-    count: 600,
-    progress: 0.3,
-  },
-];
 function MyUnit(props) {
   const navigation = useNavigation();
   const [modalNewUnit, setModalNewUnit] = React.useState(false);
   const [newUnitName, setNewUnitName] = React.useState("");
+  const { currentUser } = useAuth();
+  const [dataSource, setDataSource] = React.useState([]);
+  React.useEffect(() => {
+    if (currentUser)
+      firebase
+        .database()
+        .ref("units/" + currentUser.uid)
+        .on("value", function (snapshot) {
+          if (snapshot) {
+            const data = snapshot.val();
+            if (data) {
+              let newDataSource = [];
+              let list_id = Object.keys(data);
+              let list_unit = Object.values(data);
+              for (let i = 0; i < list_id.length; i++) {
+                newDataSource.push({
+                  unit_id: list_id[i],
+                  name: list_unit[i].name,
+                  count: list_unit[i].count,
+                  all: list_unit[i].all,
+                  progress:
+                    list_unit[i].all === 0
+                      ? 0
+                      : list_unit[i].count / list_unit[i].all,
+                });
+              }
+              setDataSource(newDataSource);
+            } else {
+              setDataSource([]);
+            }
+          }
+        });
+  }, [currentUser]);
 
   return (
     <View style={tailwind("flex-1  bg-gray-200")}>
@@ -79,7 +63,12 @@ function MyUnit(props) {
           contentContainerStyle={tailwind("flex-col p-1")}
           data={dataSource}
           renderItem={({ item, index }) => (
-            <UnitItem index={index} data={item} navigation={navigation} />
+            <UnitItem
+              index={index}
+              data={item}
+              navigation={navigation}
+              userId={currentUser.uid}
+            />
           )}
           numColumns={2}
           keyExtractor={(item, index) => index.toString()}
@@ -130,7 +119,13 @@ function MyUnit(props) {
             >
               Thêm bài học
             </Text>
-            <KTextInput placeholder="Nhập tên bài học" />
+            <KTextInput
+              placeholder="Nhập tên bài học"
+              multiline
+              numberOfLines={1}
+              value={newUnitName}
+              onChangeText={(value) => setNewUnitName(value)}
+            />
             <View style={tailwind("flex flex-row mt-8  justify-between")}>
               <View style={tailwind("w-2/4 pr-2")}>
                 <KButton
@@ -144,7 +139,26 @@ function MyUnit(props) {
                 />
               </View>
               <View style={tailwind("w-2/4 pl-2")}>
-                <KButton text="Thêm" color="blue-500" fill block />
+                <KButton
+                  text="Thêm"
+                  color="blue-500"
+                  fill
+                  block
+                  onPress={() => {
+                    if (newUnitName.trim() !== "" && currentUser) {
+                      let newUnitRef = firebase
+                        .database()
+                        .ref("units/" + currentUser.uid)
+                        .push();
+                      newUnitRef.set({
+                        name: newUnitName,
+                        count: 0,
+                        all: 0,
+                      });
+                    }
+                    setModalNewUnit(!modalNewUnit);
+                  }}
+                />
               </View>
             </View>
           </View>

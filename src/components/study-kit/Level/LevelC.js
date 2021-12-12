@@ -28,6 +28,7 @@ const LevelC = (props) => {
       });
       setList(coppy);
       console.log(coppy);
+      setStatus(["wait", "wait", "wait", "wait"]);
     }
   }, [props.data]);
   const [sound, setSound] = React.useState();
